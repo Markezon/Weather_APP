@@ -5,7 +5,8 @@
 let cityInput = document.getElementById("city_input"),
   searchBtn = document.getElementById("searchBtn"),
   api_key = "d57e7dd67678ae3df53bfb464eebf81a",
-  currentWeatherCard = document.querySelectorAll(".weather-left .card")[0];
+  currentWeatherCard = document.querySelectorAll(".weather-left .card")[0],
+  fiveDaysForecastCard = document.querySelector(".day-forecast");
 
 function getWeatherDetails(name, lat, lon, country, state) {
   let FORECAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`,
@@ -75,7 +76,30 @@ function getWeatherDetails(name, lat, lon, country, state) {
     .then((res) => res.json())
     .then((data) => {
       let uniqueForecastDays = [];
-      let fiveDaysForecast = 
+      let fiveDaysForecast = data.list.filter((forecast) => {
+        let forecastDate = new Date(forecast.dt_txt).getDate();
+        if (!uniqueForecastDays.includes(forecastDate)) {
+          return uniqueForecastDays.push(forecastDate);
+        }
+      });
+      ////заменить все innerHTML!!!!!!!!!!!!!!
+      fiveDaysForecastCard.innerHTML = "";
+      for (i = 1; 1 < fiveDaysForecast.length; i++) {
+        let date = new Date(fiveDaysForecast[i].dt_txt);
+        fiveDaysForecastCard.innerHTML += `
+            <div class="forecast-item">
+                <div class="icon-wrapper">
+                    <img
+                    src="https://openweathermap.org/img/wn/02d.png"
+                    alt="forecast_img"
+                    />
+                    <span>____&deg;C</span>
+                </div>
+                <p>____</p>
+                <p>____</p>
+            </div>
+        `;
+      }
     })
     .catch(() => {
       alert(`Failed to fetch weather forecast`);
