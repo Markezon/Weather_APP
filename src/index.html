@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link
+      href="https://pro.fontawesome.com/releases/v6.0.0-beta3/css/all.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>Weather</h2>
+
+        <div class="wheather-input">
+          <input
+            type="text"
+            name="city"
+            id="city_input"
+            placeholder="Enter city name"
+          />
+          <button type="button" id="searchBtn">
+            <i class="fa-regular fa-search"></i> Search
+          </button>
+          <button type="button" id="locationBtn">
+            <i class="bx bx-target-lock"></i> Current Location
+          </button>
+        </div>
+      </div>
+
+      <div class="weather-data">
+        <div class="weather-left">
+          <div class="card">
+            <div class="current-weather">
+              <div class="details">
+                <p>Now</p>
+                <h2>____&deg;C</h2>
+                <p>_____</p>
+              </div>
+              <div class="weather-icon">
+                <img
+                  src="https://openweathermap.org/img/wn/04d@2x.png"
+                  alt="weather-icon"
+                />
+              </div>
+            </div>
+
+            <hr />
+            <div class="card-footer">
+              <p><i class="fa-light fa-calendar"> ______</i></p>
+              <p><i class="fa-light fa-location-dot"> ______</i></p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>5 days Forecast</h2>
+            <div class="day-forecast">
+              <div class="forecast-item">
+                <div class="icon-wrapper">
+                  <img
+                    src="https://openweathermap.org/img/wn/02d.png"
+                    alt="forecast_img"
+                  />
+                  <span>____&deg;C</span>
+                </div>
+                <p>_____</p>
+                <p>_____</p>
+              </div>
+
+              <div class="forecast-item">
+                <div class="icon-wrapper">
+                  <img
+                    src="https://openweathermap.org/img/wn/02d.png"
+                    alt="forecast_img"
+                  />
+                  <span>____&deg;C</span>
+                </div>
+                <p>_____</p>
+                <p>_____</p>
+              </div>
+
+              <div class="forecast-item">
+                <div class="icon-wrapper">
+                  <img
+                    src="https://openweathermap.org/img/wn/02d.png"
+                    alt="forecast_img"
+                  />
+                  <span>____&deg;C</span>
+                </div>
+                <p>_____</p>
+                <p>_____</p>
+              </div>
+
+              <div class="forecast-item">
+                <div class="icon-wrapper">
+                  <img
+                    src="https://openweathermap.org/img/wn/02d.png"
+                    alt="forecast_img"
+                  />
+                  <span>____&deg;C</span>
+                </div>
+                <p>_____</p>
+                <p>_____</p>
+              </div>
+
+              <div class="forecast-item">
+                <div class="icon-wrapper">
+                  <img
+                    src="https://openweathermap.org/img/wn/02d.png"
+                    alt="forecast_img"
+                  />
+                  <span>____&deg;C</span>
+                </div>
+                <p>_____</p>
+                <p>_____</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="weather-right">
+          <h2>Today's Highlights</h2>
+          <div class="highlights">
+            <div class="card">
+              <div class="card-head">
+                <p>Air Quality Index</p>
+                <p class="air-index aqi-1">Good</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
