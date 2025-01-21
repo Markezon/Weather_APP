@@ -22,6 +22,10 @@ body {
   padding: 0 15px;
 }
 
+hr {
+  margin-bottom: 10px;
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -116,6 +120,10 @@ body {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       column-gap: 15px;
+      & .card:nth-of-type(1),
+      & .card:nth-of-type(2) {
+        grid-column: span 2;
+      }
       & .card-head {
         display: flex;
         justify-content: space-between;
@@ -140,6 +148,38 @@ body {
             background-color: var(--aqi-5);
           }
         }
+      }
+      & .air-indices {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        place-items: center;
+        & p {
+          text-align: center;
+        }
+      }
+      & .sunrise-sunset {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        & .item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          & h2 {
+            margin-top: 15px;
+          }
+        }
+      }
+      & .card-item {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    & .hourly-forecast {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      column-gap: 10px;
+      & .card {
+        text-align: center;
       }
     }
   }
