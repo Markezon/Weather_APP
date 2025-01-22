@@ -84,19 +84,20 @@ function getWeatherDetails(name, lat, lon, country, state) {
       });
       ////заменить все innerHTML!!!!!!!!!!!!!!
       fiveDaysForecastCard.innerHTML = "";
-      for (i = 1; 1 < fiveDaysForecast.length; i++) {
+      for (let i = 1; i < fiveDaysForecast.length; i++) {
         let date = new Date(fiveDaysForecast[i].dt_txt);
         fiveDaysForecastCard.innerHTML += `
             <div class="forecast-item">
                 <div class="icon-wrapper">
-                    <img
-                    src="https://openweathermap.org/img/wn/02d.png"
-                    alt="forecast_img"
-                    />
-                    <span>____&deg;C</span>
+                    <img src="https://openweathermap.org/img/wn/${
+                      fiveDaysForecast[i].weather[0].icon
+                    }.png" alt="forecast_img"/>
+                    <span>${(fiveDaysForecast[i].main.temp - 273.15).toFixed(
+                      2
+                    )}&deg;C</span>
                 </div>
-                <p>____</p>
-                <p>____</p>
+                <p>${date.getDate()} ${months[date.getMonth()]}</p>
+                <p>${days[date.getDay()]}</p>
             </div>
         `;
       }
