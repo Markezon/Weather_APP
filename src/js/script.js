@@ -4,6 +4,7 @@
 
 let cityInput = document.getElementById("city_input"),
   searchBtn = document.getElementById("searchBtn"),
+  locationBtn = document.getElementById("locationBtn"),
   api_key = "d57e7dd67678ae3df53bfb464eebf81a",
   currentWeatherCard = document.querySelectorAll(".weather-left .card")[0],
   fiveDaysForecastCard = document.querySelector(".day-forecast"),
@@ -192,6 +193,32 @@ function getWeatherDetails(name, lat, lon, country, state) {
   fetch(FORECAST_API_URL)
     .then((res) => res.json())
     .then((data) => {
+      let hourlyForecast = data.list;
+
+      ////заменить все innerHTML!!!!!!!!!!!!!!
+      hourlyForecastCard.innerHTML = ``;
+      for (let i = 0; i <= 7; i++) {
+        let hrForecastDate = new Date(hourlyForecast[i].dt_txt);
+        let hr = hrForecastDate.getHours();
+        let a = "PM";
+        if (hr < 12) a = "AM";
+        if (hr === 0) hr = 12;
+        if (hr > 12) hr = hr - 12;
+        ////заменить все innerHTML!!!!!!!!!!!!!!
+        hourlyForecastCard.innerHTML += `
+          <div class="card">
+            <p>${hr} ${a}</p>
+            <img
+              src="https://openweathermap.org/img/wn/${
+                hourlyForecast[i].weather[0].icon
+              }.png"
+              alt="hourly-forecast"
+            />
+            <p>${(hourlyForecast[i].main.temp - 273.15).toFixed(2)}&deg;C</p>
+          </div>
+        `;
+      }
+
       let uniqueForecastDays = [];
       let fiveDaysForecast = data.list.filter((forecast) => {
         let forecastDate = new Date(forecast.dt_txt).getDate();
@@ -240,4 +267,38 @@ function getCityCoordinates() {
     });
 }
 
+function getUserCoordinates() {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      let { latitude, longitude } = position.coords;
+      /*     console.log(latitude, longitude); */
+      let REVERSE_GEOCODING_URL = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_key}`;
+
+      fetch(REVERSE_GEOCODING_URL)
+        .then((res) => res.json())
+        .then((data) => {
+          /*         console.log(data); */
+          let { name, country, state } = data[0];
+          getWeatherDetails(name, latitude, longitude, country, state);
+        })
+        .catch(() => {
+          alert(`Failed to fetch User coordinates`);
+        });
+    },
+    (error) => {
+      if (error.code === error.PERMISSION_DENIED) {
+        alert(
+          "Geolocation permission denied. Please reset location permission to grant access again!"
+        );
+      }
+    }
+  );
+}
+
 searchBtn.addEventListener("click", getCityCoordinates);
+locationBtn.addEventListener("click", getUserCoordinates);
+cityInput.addEventListener(
+  "keyup",
+  (e) => e.key === "Enter" && getCityCoordinates()
+);
+window.addEventListener("load", getUserCoordinates);
