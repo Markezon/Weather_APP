@@ -295,10 +295,72 @@ function getUserCoordinates() {
   );
 }
 
-searchBtn.addEventListener("click", getCityCoordinates);
-locationBtn.addEventListener("click", getUserCoordinates);
-cityInput.addEventListener(
-  "keyup",
-  (e) => e.key === "Enter" && getCityCoordinates()
-);
+/////////////////////////////////////////
+
+let autocompleteList = document.getElementById("autocomplete-list");
+
+cityInput.addEventListener("input", () => {
+  let query = cityInput.value.trim();
+  if (query.length < 1) {
+    autocompleteList.innerHTML = ""; // Удаляем подсказки, если меньше 1 символов
+    return;
+  }
+
+  let GEO_API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${api_key}`;
+
+  fetch(GEO_API_URL)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      autocompleteList.innerHTML = ""; // Очистить список перед добавлением новых данных
+      data.forEach((location) => {
+        let listItem = document.createElement("li");
+        listItem.textContent = `${location.name}, ${location.country}`;
+        listItem.addEventListener("click", () => {
+          cityInput.value = location.name;
+          autocompleteList.innerHTML = ""; // Очистить список после выбора
+          getWeatherDetails(
+            location.name,
+            location.lat,
+            location.lon,
+            location.country,
+            location.state
+          );
+        });
+        autocompleteList.appendChild(listItem);
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching autocomplete data:", err);
+    });
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".autocomplete")) {
+    autocompleteList.innerHTML = ""; // Закрыть подсказки, если клик не в зоне автозаполнения
+  }
+});
+
+function closeAutocompleteList() {
+  autocompleteList.innerHTML = "";
+}
+/////////////////////////////////////
+
+searchBtn.addEventListener("click", () => {
+  getCityCoordinates();
+  closeAutocompleteList();
+});
+
+locationBtn.addEventListener("click", () => {
+  getUserCoordinates();
+  closeAutocompleteList();
+});
+
+cityInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    getCityCoordinates();
+    closeAutocompleteList();
+  }
+});
+
 window.addEventListener("load", getUserCoordinates);

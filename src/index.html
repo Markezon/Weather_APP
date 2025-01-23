@@ -20,19 +20,23 @@
       <div class="header">
         <h2>Weather</h2>
 
-        <div class="wheather-input">
-          <input
-            type="text"
-            name="city"
-            id="city_input"
-            placeholder="Enter city name"
-          />
-          <button type="button" id="searchBtn">
-            <i class="fa-regular fa-search"></i> Search
-          </button>
-          <button type="button" id="locationBtn">
-            <i class="bx bx-target-lock"></i> Current Location
-          </button>
+        <div class="autocomplete">
+          <div class="wheather-input">
+            <input
+              type="text"
+              name="city"
+              id="city_input"
+              placeholder="Enter city name"
+              autocomplete="off"
+            />
+            <button type="button" id="searchBtn">
+              <i class="fa-regular fa-search"></i> Search
+            </button>
+            <button type="button" id="locationBtn">
+              <i class="bx bx-target-lock"></i> Current Location
+            </button>
+          </div>
+          <ul id="autocomplete-list"></ul>
         </div>
       </div>
 
