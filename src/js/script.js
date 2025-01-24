@@ -295,7 +295,7 @@ function getUserCoordinates() {
   );
 }
 
-/////////////////////////////////////////
+/////////////////////////////////////////подсказки
 
 let autocompleteList = document.getElementById("autocomplete-list");
 
@@ -311,7 +311,6 @@ cityInput.addEventListener("input", () => {
   fetch(GEO_API_URL)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       autocompleteList.innerHTML = ""; // Очистить список перед добавлением новых данных
       data.forEach((location) => {
         let listItem = document.createElement("li");
@@ -344,12 +343,135 @@ document.addEventListener("click", (e) => {
 function closeAutocompleteList() {
   autocompleteList.innerHTML = "";
 }
+
+//////////////////////////////////////
+
+//////////////////////////////////////modal
+
+const cityModal = document.getElementById("cityModal");
+const closeModal = document.getElementById("closeModal");
+const modalSearchBtn = document.getElementById("modalSearchBtn");
+const modalCityInput = document.getElementById("modalCityInput");
+
+// Закрытие модального окна
+closeModal.addEventListener("click", () => {
+  cityModal.style.display = "none";
+});
+
+// Закрытие модального окна при клике вне его области
+window.addEventListener("click", (event) => {
+  if (event.target === cityModal) {
+    cityModal.style.display = "none";
+  }
+});
+
+/////////////////////////
+/////////////////////////
+
+/////////////////////////////////////////
+
+let modalAutocompleteList = document.getElementById("modalAutocomplete-list");
+
+modalCityInput.addEventListener("input", () => {
+  let query = modalCityInput.value.trim();
+  if (query.length < 1) {
+    modalAutocompleteList.innerHTML = ""; // Удаляем подсказки, если меньше 1 символов
+    return;
+  }
+
+  let GEO_API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${api_key}`;
+
+  fetch(GEO_API_URL)
+    .then((res) => res.json())
+    .then((data) => {
+      modalAutocompleteList.innerHTML = ""; // Очистить список перед добавлением новых данных
+      data.forEach((location) => {
+        let listItem = document.createElement("li");
+        listItem.textContent = `${location.name}, ${location.country}`;
+        listItem.addEventListener("click", () => {
+          /*           modalCityInput.value = location.name;
+          modalAutocompleteList.innerHTML = ""; */ // Очистить список после выбора
+          modalCityInput.value = ""; // Очищаем поле ввода
+          modalAutocompleteList.innerHTML = ""; // Очистить список после выбора
+          cityModal.style.display = "none"; // Закрываем модальное окно
+          getWeatherDetails(
+            location.name,
+            location.lat,
+            location.lon,
+            location.country,
+            location.state
+          );
+        });
+        modalAutocompleteList.appendChild(listItem);
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching autocomplete data:", err);
+    });
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".autocomplete")) {
+    modalAutocompleteList.innerHTML = ""; // Закрыть подсказки, если клик не в зоне автозаполнения
+  }
+});
+
+function closeAutocompleteList() {
+  modalAutocompleteList.innerHTML = "";
+}
+
+//////////////////////////////////////
+/////////////////////////
+/////////////////////////
+function getCityCoordinateModal() {
+  let cityName = modalCityInput.value.trim();
+  modalCityInput.value = "";
+  if (!modalCityInput) return;
+  cityModal.style.display = "none";
+  let GEOCODING_API_URL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${api_key}`;
+  fetch(GEOCODING_API_URL)
+    .then((res) => res.json())
+    .then((data) => {
+      let { name, lat, lon, country, state } = data[0];
+      getWeatherDetails(name, lat, lon, country, state);
+    })
+    .catch(() => {
+      alert(`Failed to fetch coordinates of ${cityName}`);
+    });
+}
+
+// Действие при нажатии на кнопку поиска в модальном окне///////////////////////////////////////////
+modalSearchBtn.addEventListener("click", () => {
+  getCityCoordinateModal();
+});
+
+/////////////////////////////////////
 /////////////////////////////////////
 
 searchBtn.addEventListener("click", () => {
-  getCityCoordinates();
-  closeAutocompleteList();
+  if (window.innerWidth > 660) {
+    getCityCoordinates();
+    closeAutocompleteList();
+  }
+  if (window.innerWidth <= 660) {
+    cityModal.style.display = "block";
+  }
 });
+
+// Функция для управления текстом на кнопке
+function toggleButtonText() {
+  if (window.innerWidth < 500) {
+    searchBtn.innerHTML = '<i class="fa-regular fa-search"></i>'; // Только иконка
+  } else {
+    searchBtn.innerHTML = '<i class="fa-regular fa-search"></i> Search'; // Иконка и текст
+  }
+}
+
+// Добавляем обработчик события изменения размера окна
+window.addEventListener("resize", toggleButtonText);
+
+// Вызываем функцию при загрузке страницы
+toggleButtonText();
 
 locationBtn.addEventListener("click", () => {
   getUserCoordinates();
@@ -360,6 +482,21 @@ cityInput.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     getCityCoordinates();
     closeAutocompleteList();
+  }
+});
+
+modalCityInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    getCityCoordinateModal();
+    closeAutocompleteList();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    cityModal.style.display = "none"; // Закрываем модальное окно
+    modalCityInput.value = ""; // Очищаем поле ввода
+    modalAutocompleteList.innerHTML = ""; // Удаляем список подсказок
   }
 });
 

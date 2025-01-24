@@ -18,7 +18,7 @@
   <body>
     <div class="container">
       <div class="header">
-        <h2>Weather</h2>
+        <h2>Weatherio</h2>
 
         <div class="autocomplete">
           <div class="wheather-input">
@@ -33,7 +33,7 @@
               <i class="fa-regular fa-search"></i> Search
             </button>
             <button type="button" id="locationBtn">
-              <i class="bx bx-target-lock"></i> Current Location
+              <i class="bx bx-target-lock"></i> My Location
             </button>
           </div>
           <ul id="autocomplete-list"></ul>
@@ -337,6 +337,32 @@
         </div>
       </div>
     </div>
+
+    <div class="modal" id="cityModal">
+      <div class="modal-content">
+        <span class="modal-close" id="closeModal">&times;</span>
+        <h3>Enter City Name</h3>
+
+        <div class="modalAutocomplete">
+          <div class="wheather-input">
+            <input
+              type="text"
+              name="city"
+              id="modalCityInput"
+              placeholder="City name"
+              autocomplete="off"
+            />
+            <button
+              type="button"
+              class="fa-regular fa-search"
+              id="modalSearchBtn"
+            ></button>
+          </div>
+          <ul id="modalAutocomplete-list"></ul>
+        </div>
+      </div>
+    </div>
+
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="js/script.js"></script>
   </body>
