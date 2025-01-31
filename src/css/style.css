@@ -17,13 +17,29 @@
 body {
   min-height: 100vh;
   background-color: var(--bg-color1);
+  background-image: url(../img/ClearSkySunny/clearSky2.jpg);
+  background-size: cover;
   color: #fff;
   font-family: sans-serif;
-  padding: 0 15px;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
 }
 
 hr {
   margin-bottom: 10px;
+}
+
+.container {
+  padding: 0 15px;
 }
 
 .header {
@@ -34,7 +50,7 @@ hr {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  padding: 15px 0;
+  padding: 15px;
   z-index: 11;
 
   & #city_input {
@@ -78,7 +94,8 @@ hr {
 }
 
 .card {
-  background-color: var(--bg-color2);
+  /*   background-color: var(--bg-color2); */
+  background: rgba(42, 43, 45, 0.95);
   padding: 15px;
   border-radius: 15px;
   margin-bottom: 15px;
@@ -281,6 +298,9 @@ hr {
 }
 
 @media (max-width: 850px) {
+  .header__wrapper {
+    gap: 4px;
+  }
   .weather-data {
     grid-template-columns: 1fr;
     & .weather-right .highlights {
@@ -522,3 +542,5 @@ hr {
 #modalAutocomplete-list li:hover {
   background-color: var(--bg-color2);
 }
+
+/* ?????????????????????????????????? */

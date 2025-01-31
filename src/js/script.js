@@ -113,43 +113,56 @@ function getWeatherDetails(name, lat, lon, country, state) {
       console.log(data);
       let date = new Date();
       let weatherImg = "img/WeatherioLogo.svg";
+      let body = document.getElementById("body");
       switch (data.weather[0].icon) {
         case "01n":
         case "01d":
           weatherImg = "img/ClearSkySunny/ClearSkySunny.svg";
+          body.style.backgroundImage = "url('img/ClearSkySunny/clearSky2.jpg')";
           break;
         case "02n":
         case "02d":
           weatherImg = "img/FewClouds/FewClouds.svg";
+          body.style.backgroundImage = "url('img/FewClouds/FewClouds.jpg')";
           break;
         case "03n":
         case "03d":
           weatherImg = "img/ScatteredClouds/ScatteredClouds.svg";
+          body.style.backgroundImage =
+            "url('img/ScatteredClouds/ScatteredClouds.jpg')";
           break;
         case "04n":
         case "04d":
           weatherImg = "img/BrokenClouds/BrokenClouds.svg";
+          body.style.backgroundImage =
+            "url('img/BrokenClouds/BrokenClouds.jpg')";
           break;
         case "09n":
         case "09d":
         case "10n":
         case "10d":
           weatherImg = "img/Rain/Rain.svg";
+          body.style.backgroundImage = "url('img/Rain/Rain.jpg')";
           break;
         case "11n":
         case "11d":
           weatherImg = "img/Thunderstorm/Thunderstorm.svg";
+          body.style.backgroundImage =
+            "url('img/Thunderstorm/Thunderstorm.jpg')";
           break;
         case "13n":
         case "13d":
           weatherImg = "img/Snow/Snow.svg";
+          body.style.backgroundImage = "url('img/Snow/Snow.jpg')";
           break;
         case "50n":
         case "50d":
           weatherImg = "img/Mist/Mist.svg";
+          body.style.backgroundImage = "url('img/Mist/Mist.jpg')";
           break;
         default:
           weatherImg = "img/WeatherioLogo.svg";
+          body.style.backgroundImage = "url('img/ClearSkySunny/clearSky2.jpg')";
       }
 
       ////заменить все innerHTML!!!!!!!!!!!!!!
@@ -406,21 +419,37 @@ const closeModal = document.getElementById("closeModal");
 const modalSearchBtn = document.getElementById("modalSearchBtn");
 const modalCityInput = document.getElementById("modalCityInput");
 
-// Закрытие модального окна
-closeModal.addEventListener("click", () => {
+/////////////////////////////////////
+function openModal() {
+  // открытие модального окна
+  cityModal.classList.add("show");
+  modalCityInput.value = "";
+  modalCityInput.focus(); // Устанавливаем фокус в поле ввода
+  setTimeout(() => {
+    cityModal.style.display = "block";
+  }, 10);
+}
+
+function closeModalFunction() {
+  // Закрываем модальное окно
   cityModal.classList.remove("show");
+  modalCityInput.value = ""; // Очищаем поле ввода
+  modalAutocompleteList.innerHTML = ""; // Удаляем список подсказок
   setTimeout(() => {
     cityModal.style.display = "none";
   }, 300);
+}
+/////////////////////////////////////
+
+// Закрытие модального окна по клику на X
+closeModal.addEventListener("click", () => {
+  closeModalFunction();
 });
 
 // Закрытие модального окна при клике вне его области
 window.addEventListener("click", (event) => {
   if (event.target === cityModal) {
-    cityModal.classList.remove("show");
-    setTimeout(() => {
-      cityModal.style.display = "none";
-    }, 300);
+    closeModalFunction();
   }
 });
 
@@ -448,11 +477,7 @@ modalCityInput.addEventListener("input", () => {
         let listItem = document.createElement("li");
         listItem.textContent = `${location.name}, ${location.country}`;
         listItem.addEventListener("click", () => {
-          /*           modalCityInput.value = location.name;
-          modalAutocompleteList.innerHTML = ""; */ // Очистить список после выбора
-          modalCityInput.value = ""; // Очищаем поле ввода
-          modalAutocompleteList.innerHTML = ""; // Очистить список после выбора
-          cityModal.style.display = "none"; // Закрываем модальное окно
+          closeModalFunction();
           getWeatherDetails(
             location.name,
             location.lat,
@@ -475,7 +500,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function closeAutocompleteList() {
+function closeModalAutocompleteList() {
   modalAutocompleteList.innerHTML = "";
 }
 
@@ -486,7 +511,7 @@ function getCityCoordinateModal() {
   let cityName = modalCityInput.value.trim();
   modalCityInput.value = "";
   if (!modalCityInput) return;
-  cityModal.style.display = "none";
+  closeModalFunction();
   let GEOCODING_API_URL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${api_key}`;
   fetch(GEOCODING_API_URL)
     .then((res) => res.json())
@@ -505,6 +530,7 @@ modalSearchBtn.addEventListener("click", () => {
 });
 
 /////////////////////////////////////
+
 /////////////////////////////////////
 
 searchBtn.addEventListener("click", () => {
@@ -514,8 +540,7 @@ searchBtn.addEventListener("click", () => {
   }
 
   if (window.innerWidth <= 660) {
-    cityModal.style.display = "block";
-    setTimeout(() => cityModal.classList.add("show"), 10);
+    openModal();
   }
 });
 
@@ -549,15 +574,13 @@ cityInput.addEventListener("keyup", (e) => {
 modalCityInput.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     getCityCoordinateModal();
-    closeAutocompleteList();
+    closeModalAutocompleteList();
   }
 });
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
-    cityModal.style.display = "none"; // Закрываем модальное окно
-    modalCityInput.value = ""; // Очищаем поле ввода
-    modalAutocompleteList.innerHTML = ""; // Удаляем список подсказок
+    closeModalFunction();
   }
 });
 
