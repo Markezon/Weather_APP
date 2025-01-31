@@ -18,7 +18,18 @@ let cityInput = document.getElementById("city_input"),
   hourlyForecastCard = document.querySelector(".hourly-forecast"),
   aqiList = ["Good", "Fair", "Moderate", "Poor", "Very Poor"];
 
+function showSpinner() {
+  document.getElementById("spinner").classList.add("show-spinner");
+}
+
+function hideSpinner() {
+  document.getElementById("spinner").classList.remove("show-spinner");
+}
+
+showSpinner();
+
 function getWeatherDetails(name, lat, lon, country, state) {
+  showSpinner(); // Показываем спиннер перед запросами
   let FORECAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`,
     WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}`,
     AIR_POLLUTION_API_URL = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${api_key}`,
@@ -49,7 +60,6 @@ function getWeatherDetails(name, lat, lon, country, state) {
   fetch(AIR_POLLUTION_API_URL)
     .then((res) => res.json())
     .then((data) => {
-      /*       console.log(data); */
       let { co, no, no2, o3, so2, pm2_5, pm10, nh3 } = data.list[0].components;
       ////заменить все innerHTML!!!!!!!!!!!!!!
       aqiCard.innerHTML = `
@@ -110,59 +120,55 @@ function getWeatherDetails(name, lat, lon, country, state) {
   fetch(WEATHER_API_URL)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       let date = new Date();
       let weatherImg = "img/WeatherioLogo.svg";
       let body = document.getElementById("body");
       switch (data.weather[0].icon) {
         case "01n":
         case "01d":
-          weatherImg = "img/ClearSkySunny/ClearSkySunny.svg";
-          body.style.backgroundImage = "url('img/ClearSkySunny/clearSky2.jpg')";
+          weatherImg = "img/ClearSkySunny.svg";
+          body.style.backgroundImage = "url('img/ClearSky2.jpg')";
           break;
         case "02n":
         case "02d":
-          weatherImg = "img/FewClouds/FewClouds.svg";
-          body.style.backgroundImage = "url('img/FewClouds/FewClouds.jpg')";
+          weatherImg = "img/FewClouds.svg";
+          body.style.backgroundImage = "url('img/FewClouds.jpg')";
           break;
         case "03n":
         case "03d":
-          weatherImg = "img/ScatteredClouds/ScatteredClouds.svg";
-          body.style.backgroundImage =
-            "url('img/ScatteredClouds/ScatteredClouds.jpg')";
+          weatherImg = "img/ScatteredClouds.svg";
+          body.style.backgroundImage = "url('img/ScatteredClouds.jpg')";
           break;
         case "04n":
         case "04d":
-          weatherImg = "img/BrokenClouds/BrokenClouds.svg";
-          body.style.backgroundImage =
-            "url('img/BrokenClouds/BrokenClouds.jpg')";
+          weatherImg = "img/BrokenClouds.svg";
+          body.style.backgroundImage = "url('img/BrokenClouds.jpg')";
           break;
         case "09n":
         case "09d":
         case "10n":
         case "10d":
-          weatherImg = "img/Rain/Rain.svg";
-          body.style.backgroundImage = "url('img/Rain/Rain.jpg')";
+          weatherImg = "img/Rain.svg";
+          body.style.backgroundImage = "url('img/Rain.jpg')";
           break;
         case "11n":
         case "11d":
-          weatherImg = "img/Thunderstorm/Thunderstorm.svg";
-          body.style.backgroundImage =
-            "url('img/Thunderstorm/Thunderstorm.jpg')";
+          weatherImg = "img/Thunderstorm.svg";
+          body.style.backgroundImage = "url('img/Thunderstorm.jpg')";
           break;
         case "13n":
         case "13d":
-          weatherImg = "img/Snow/Snow.svg";
-          body.style.backgroundImage = "url('img/Snow/Snow.jpg')";
+          weatherImg = "img/Snow.svg";
+          body.style.backgroundImage = "url('img/Snow.jpg')";
           break;
         case "50n":
         case "50d":
-          weatherImg = "img/Mist/Mist.svg";
-          body.style.backgroundImage = "url('img/Mist/Mist.jpg')";
+          weatherImg = "img/Mist.svg";
+          body.style.backgroundImage = "url('img/Mist.jpg')";
           break;
         default:
           weatherImg = "img/WeatherioLogo.svg";
-          body.style.backgroundImage = "url('img/ClearSkySunny/clearSky2.jpg')";
+          body.style.backgroundImage = "url('img/ClearSky2.jpg')";
       }
 
       ////заменить все innerHTML!!!!!!!!!!!!!!
@@ -314,6 +320,9 @@ function getWeatherDetails(name, lat, lon, country, state) {
     })
     .catch(() => {
       alert(`Failed to fetch weather forecast`);
+    })
+    .finally(() => {
+      hideSpinner(); // Скрываем спиннер после загрузки данных
     });
 }
 
@@ -337,13 +346,11 @@ function getUserCoordinates() {
   navigator.geolocation.getCurrentPosition(
     (position) => {
       let { latitude, longitude } = position.coords;
-      /*     console.log(latitude, longitude); */
       let REVERSE_GEOCODING_URL = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${api_key}`;
 
       fetch(REVERSE_GEOCODING_URL)
         .then((res) => res.json())
         .then((data) => {
-          /*         console.log(data); */
           let { name, country, state } = data[0];
           getWeatherDetails(name, latitude, longitude, country, state);
         })
@@ -382,7 +389,7 @@ cityInput.addEventListener("input", () => {
         let listItem = document.createElement("li");
         listItem.textContent = `${location.name}, ${location.country}`;
         listItem.addEventListener("click", () => {
-          cityInput.value = location.name;
+          cityInput.value = "";
           autocompleteList.innerHTML = ""; // Очистить список после выбора
           getWeatherDetails(
             location.name,
