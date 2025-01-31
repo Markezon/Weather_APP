@@ -110,7 +110,48 @@ function getWeatherDetails(name, lat, lon, country, state) {
   fetch(WEATHER_API_URL)
     .then((res) => res.json())
     .then((data) => {
+      console.log(data);
       let date = new Date();
+      let weatherImg = "img/WeatherioLogo.svg";
+      switch (data.weather[0].icon) {
+        case "01n":
+        case "01d":
+          weatherImg = "img/ClearSkySunny/ClearSkySunny.svg";
+          break;
+        case "02n":
+        case "02d":
+          weatherImg = "img/FewClouds/FewClouds.svg";
+          break;
+        case "03n":
+        case "03d":
+          weatherImg = "img/ScatteredClouds/ScatteredClouds.svg";
+          break;
+        case "04n":
+        case "04d":
+          weatherImg = "img/BrokenClouds/BrokenClouds.svg";
+          break;
+        case "09n":
+        case "09d":
+        case "10n":
+        case "10d":
+          weatherImg = "img/Rain/Rain.svg";
+          break;
+        case "11n":
+        case "11d":
+          weatherImg = "img/Thunderstorm/Thunderstorm.svg";
+          break;
+        case "13n":
+        case "13d":
+          weatherImg = "img/Snow/Snow.svg";
+          break;
+        case "50n":
+        case "50d":
+          weatherImg = "img/Mist/Mist.svg";
+          break;
+        default:
+          weatherImg = "img/WeatherioLogo.svg";
+      }
+
       ////заменить все innerHTML!!!!!!!!!!!!!!
       currentWeatherCard.innerHTML = `
         <div class="current-weather">
@@ -125,7 +166,7 @@ function getWeatherDetails(name, lat, lon, country, state) {
                       data.weather[0].icon
                     }@2x.png"
                     alt="weather-icon"
-                />
+                />                
             </div>
         </div>
 
@@ -137,6 +178,18 @@ function getWeatherDetails(name, lat, lon, country, state) {
         months[date.getMonth()]
       } ${date.getFullYear()}</p>
             <p><i class="fa-light fa-location-dot"></i> ${name}, ${country}</p>
+        <hr />
+            <div class="feelsLike__card">              
+                <div class="feelsLike__card-item">
+                  <div class="feelsLike__card-head">                            
+                    Feels like
+                  </div>
+                  <i class="fa-light fa-temperature-list fa-2x"></i>
+                  <h2>${(data.main.feels_like - 273.15).toFixed(2)}&deg;C</h2>
+                </div>
+                <img src=${weatherImg} alt="weatherImg" class="weatherImg" />              
+            </div>            
+
         </div>
         `;
 
@@ -355,13 +408,19 @@ const modalCityInput = document.getElementById("modalCityInput");
 
 // Закрытие модального окна
 closeModal.addEventListener("click", () => {
-  cityModal.style.display = "none";
+  cityModal.classList.remove("show");
+  setTimeout(() => {
+    cityModal.style.display = "none";
+  }, 300);
 });
 
 // Закрытие модального окна при клике вне его области
 window.addEventListener("click", (event) => {
   if (event.target === cityModal) {
-    cityModal.style.display = "none";
+    cityModal.classList.remove("show");
+    setTimeout(() => {
+      cityModal.style.display = "none";
+    }, 300);
   }
 });
 
@@ -453,8 +512,10 @@ searchBtn.addEventListener("click", () => {
     getCityCoordinates();
     closeAutocompleteList();
   }
+
   if (window.innerWidth <= 660) {
     cityModal.style.display = "block";
+    setTimeout(() => cityModal.classList.add("show"), 10);
   }
 });
 
@@ -501,3 +562,32 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("load", getUserCoordinates);
+////////////////////////////////////////////$RECYCLE.BIN//////////////S-1-5-18/////////////////////////
+/////////////////////////////////////////////////$RECYCLE.BIN/////////////////////////S-1-5-18/////////////
+/////////////////////////////////////////$RECYCLE.BIN////////////////////////////S-1-5-18//////////////
+function updateLayout() {
+  let leftBlock = document.querySelector(".weather-left");
+  let rightBlock = document.querySelector(".weather-right");
+  let screenWidth = window.innerWidth;
+  let screenHeight = window.innerHeight;
+
+  if (screenWidth >= 850 && screenWidth < 1100) {
+    rightBlock.style.overflowY = "auto";
+    rightBlock.style.maxHeight = `${screenHeight}px`;
+
+    let leftHeight = leftBlock.offsetHeight;
+    if (leftHeight < screenHeight) {
+      leftBlock.style.position = "sticky";
+      leftBlock.style.top = "0";
+    } else {
+      leftBlock.style.position = "relative";
+    }
+  } else {
+    rightBlock.style.overflowY = "visible";
+    leftBlock.style.position = "relative";
+  }
+}
+
+// Запускаем при загрузке и изменении размеров окна
+window.addEventListener("load", updateLayout);
+window.addEventListener("resize", updateLayout);

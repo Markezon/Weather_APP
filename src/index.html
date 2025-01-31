@@ -18,7 +18,10 @@
   <body>
     <div class="container">
       <div class="header">
-        <h2>Weatherio</h2>
+        <div class="header__wrapper">
+          <img src="img/WeatherioLogo.svg" alt="logo" class="header__logo" />
+          <h2>Weatherio</h2>
+        </div>
 
         <div class="autocomplete">
           <div class="wheather-input">
@@ -61,6 +64,16 @@
             <div class="card-footer">
               <p><i class="fa-light fa-calendar"></i> ____</p>
               <p><i class="fa-light fa-location-dot"></i> ____</p>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <p>Feels like</p>
+              </div>
+              <div class="card-item">
+                <i class="fa-light fa-temperature-list fa-2x"></i>
+                <h2 id="feelsVal">____&deg;C</h2>
+              </div>
             </div>
           </div>
 
@@ -249,7 +262,7 @@
               </div>
             </div>
 
-            <div class="card">
+            <!--             <div class="card">
               <div class="card-head">
                 <p>Feels like</p>
               </div>
@@ -257,7 +270,7 @@
                 <i class="fa-light fa-temperature-list fa-2x"></i>
                 <h2 id="feelsVal">____&deg;C</h2>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <h2>Today at</h2>
