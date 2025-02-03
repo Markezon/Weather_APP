@@ -248,6 +248,9 @@ hr {
   grid-template-columns: repeat(2, 1fr);
   justify-content: space-between;
   align-items: center;
+  & h2 {
+    margin-left: 10px;
+  }
 }
 
 @media (max-width: 1100px) {
