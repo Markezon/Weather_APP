@@ -1,11 +1,9 @@
 "use strict";
 
-////заменить все innerHTML!!!!!!!!!!!!!!
-
+const api_key = "d57e7dd67678ae3df53bfb464eebf81a";
 let cityInput = document.getElementById("city_input"),
   searchBtn = document.getElementById("searchBtn"),
   locationBtn = document.getElementById("locationBtn"),
-  api_key = "d57e7dd67678ae3df53bfb464eebf81a",
   currentWeatherCard = document.querySelectorAll(".weather-left .card")[0],
   fiveDaysForecastCard = document.querySelector(".day-forecast"),
   aqiCard = document.querySelectorAll(".highlights .card")[0],
@@ -61,57 +59,68 @@ function getWeatherDetails(name, lat, lon, country, state) {
     .then((res) => res.json())
     .then((data) => {
       let { co, no, no2, o3, so2, pm2_5, pm10, nh3 } = data.list[0].components;
-      ////заменить все innerHTML!!!!!!!!!!!!!!
-      aqiCard.innerHTML = `
-        <div class="card-head">
-          <p>Air Quality Index</p>
-          <p class="air-index aqi-${data.list[0].main.aqi}">${
-        aqiList[data.list[0].main.aqi - 1]
-      }</p>
-        </div>
-        <div class="air-indices">
-          <i class="fa-regular fa-wind fa-3x"></i>
-          <div class="item">
-            <p>PM2.5</p>
-            <h2>${pm2_5}</h2>
-          </div>
 
-          <div class="item">
-            <p>PM10</p>
-            <h2>${pm10}</h2>
-          </div>
+      // Очистка контейнера перед добавлением новых элементов
+      aqiCard.innerHTML = "";
 
-          <div class="item">
-            <p>SO2</p>
-            <h2>${so2}</h2>
-          </div>
+      // Создаем card-head
+      const cardHead = document.createElement("div");
+      cardHead.classList.add("card-head");
 
-          <div class="item">
-            <p>CO</p>
-            <h2>${co}</h2>
-          </div>
+      const title = document.createElement("p");
+      title.textContent = "Air Quality Index";
 
-          <div class="item">
-            <p>NO</p>
-            <h2>${no}</h2>
-          </div>
+      const airIndex = document.createElement("p");
+      airIndex.classList.add("air-index", `aqi-${data.list[0].main.aqi}`);
+      airIndex.textContent = aqiList[data.list[0].main.aqi - 1];
 
-          <div class="item">
-            <p>NO2</p>
-            <h2>${no2}</h2>
-          </div>
+      cardHead.appendChild(title);
+      cardHead.appendChild(airIndex);
 
-          <div class="item">
-            <p>NH3</p>
-            <h2>${nh3}</h2>
-          </div>
+      // Создаем air-indices
+      const airIndices = document.createElement("div");
+      airIndices.classList.add("air-indices");
 
-          <div class="item">
-            <p>O3</p>
-            <h2>${o3}</h2>
-          </div>
-        </div>
-      `;
+      const icon = document.createElement("i");
+      icon.classList.add("fa-regular", "fa-wind", "fa-3x");
+      airIndices.appendChild(icon);
+
+      // Функция для создания элемента индекса
+      const createItemIndexes = (label, value) => {
+        const item = document.createElement("div");
+        item.classList.add("item");
+
+        const labelEl = document.createElement("p");
+        labelEl.textContent = label;
+
+        const valueEl = document.createElement("h2");
+        valueEl.textContent = value;
+
+        item.appendChild(labelEl);
+        item.appendChild(valueEl);
+
+        return item;
+      };
+
+      // Добавляем все индексы
+      const indices = [
+        { label: "PM2.5", value: pm2_5 },
+        { label: "PM10", value: pm10 },
+        { label: "SO2", value: so2 },
+        { label: "CO", value: co },
+        { label: "NO", value: no },
+        { label: "NO2", value: no2 },
+        { label: "NH3", value: nh3 },
+        { label: "O3", value: o3 },
+      ];
+
+      indices.forEach(({ label, value }) => {
+        airIndices.appendChild(createItemIndexes(label, value));
+      });
+
+      // Добавляем все элементы в основной контейнер
+      aqiCard.appendChild(cardHead);
+      aqiCard.appendChild(airIndices);
     })
     .catch(() => {
       alert(`Failed to fetch Air Quality Index`);
@@ -171,46 +180,105 @@ function getWeatherDetails(name, lat, lon, country, state) {
           body.style.backgroundImage = "url('img/ClearSky2.jpg')";
       }
 
-      ////заменить все innerHTML!!!!!!!!!!!!!!
-      currentWeatherCard.innerHTML = `
-        <div class="current-weather">
-            <div class="details">
-                <p>Now</p>
-                <h2>${(data.main.temp - 273.15).toFixed(2)}&deg;C</h2>
-                <p>${data.weather[0].description}</p>
-            </div>
-            <div class="weather-icon">
-                <img
-                    src="https://openweathermap.org/img/wn/${
-                      data.weather[0].icon
-                    }@2x.png"
-                    alt="weather-icon"
-                />                
-            </div>
-        </div>
+      // Очистка контейнера перед добавлением новых элементов
+      currentWeatherCard.innerHTML = "";
 
-        <hr />
-        <div class="card-footer">
-            <p><i class="fa-light fa-calendar"></i>${
-              days[date.getDay()]
-            }, ${date.getDate()}, ${
-        months[date.getMonth()]
-      } ${date.getFullYear()}</p>
-            <p><i class="fa-light fa-location-dot"></i> ${name}, ${country}</p>
-        <hr />
-            <div class="feelsLike__card">              
-                <div class="feelsLike__card-item">
-                  <div class="feelsLike__card-head">                            
-                    Feels like
-                  </div>
-                  <i class="fa-light fa-temperature-list fa-2x"></i>
-                  <h2>${(data.main.feels_like - 273.15).toFixed(2)}&deg;C</h2>
-                </div>
-                <img src=${weatherImg} alt="weatherImg" class="weatherImg" />              
-            </div>            
+      // Создаем основной контейнер
+      const currentWeather = document.createElement("div");
+      currentWeather.classList.add("current-weather");
 
-        </div>
-        `;
+      // Создаем блок с деталями
+      const details = document.createElement("div");
+      details.classList.add("details");
+
+      const nowText = document.createElement("p");
+      nowText.textContent = "Now";
+
+      const temp = document.createElement("h2");
+      temp.innerHTML = `${(data.main.temp - 273.15).toFixed(2)}&deg;C`;
+
+      const description = document.createElement("p");
+      description.textContent = data.weather[0].description;
+
+      details.appendChild(nowText);
+      details.appendChild(temp);
+      details.appendChild(description);
+
+      // Создаем блок с иконкой погоды
+      const weatherIcon = document.createElement("div");
+      weatherIcon.classList.add("weather-icon");
+
+      const weatherImgEl = document.createElement("img");
+      weatherImgEl.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+      weatherImgEl.alt = "weather-icon";
+
+      weatherIcon.appendChild(weatherImgEl);
+
+      // Добавляем в контейнер
+      currentWeather.appendChild(details);
+      currentWeather.appendChild(weatherIcon);
+
+      // Создаем разделитель
+      const hr1 = document.createElement("hr");
+
+      // Создаем футер карточки
+      const cardFooter = document.createElement("div");
+      cardFooter.classList.add("card-footer");
+
+      const dateInfo = document.createElement("p");
+      dateInfo.innerHTML = `<i class="fa-light fa-calendar"></i> ${
+        days[date.getDay()]
+      }, ${date.getDate()}, ${months[date.getMonth()]} ${date.getFullYear()}`;
+
+      const locationInfo = document.createElement("p");
+      locationInfo.innerHTML = `<i class="fa-light fa-location-dot"></i> ${name}, ${country}`;
+
+      cardFooter.appendChild(dateInfo);
+      cardFooter.appendChild(locationInfo);
+
+      // Второй разделитель
+      const hr2 = document.createElement("hr");
+
+      // Создаем карточку "Feels like"
+      const feelsLikeCard = document.createElement("div");
+      feelsLikeCard.classList.add("feelsLike__card");
+
+      // Создаем элемент "Feels like"
+      const feelsLikeItem = document.createElement("div");
+      feelsLikeItem.classList.add("feelsLike__card-item");
+
+      const feelsLikeHead = document.createElement("div");
+      feelsLikeHead.classList.add("feelsLike__card-head");
+      feelsLikeHead.textContent = "Feels like";
+
+      const tempIcon = document.createElement("i");
+      tempIcon.classList.add("fa-light", "fa-temperature-list", "fa-2x");
+
+      const feelsLikeTemp = document.createElement("h2");
+      feelsLikeTemp.innerHTML = `${(data.main.feels_like - 273.15).toFixed(
+        2
+      )}&deg;C`;
+
+      // Добавляем элементы в карточку "Feels like"
+      feelsLikeItem.appendChild(feelsLikeHead);
+      feelsLikeItem.appendChild(tempIcon);
+      feelsLikeItem.appendChild(feelsLikeTemp);
+
+      const weatherImgEl2 = document.createElement("img");
+      weatherImgEl2.src = weatherImg;
+      weatherImgEl2.alt = "weatherImg";
+      weatherImgEl2.classList.add("weatherImg");
+
+      // Собираем карточку "Feels like"
+      feelsLikeCard.appendChild(feelsLikeItem);
+      feelsLikeCard.appendChild(weatherImgEl2);
+
+      // Добавляем все элементы в основной контейнер
+      currentWeatherCard.appendChild(currentWeather);
+      currentWeatherCard.appendChild(hr1);
+      currentWeatherCard.appendChild(cardFooter);
+      currentWeatherCard.appendChild(hr2);
+      currentWeatherCard.appendChild(feelsLikeCard);
 
       let { sunrise, sunset } = data.sys,
         { timezone, visibility } = data,
@@ -225,38 +293,67 @@ function getWeatherDetails(name, lat, lon, country, state) {
           .add(timezone, "seconds")
           .format("hh:mm A");
 
-      sunriseCard.innerHTML = `
-        <div class="card-head">
-          <p>Sunrise & Sunset</p>
-        </div>
-        <div class="sunrise-sunset">
-          <div class="item">
-            <div class="icon">
-              <i class="fa-light fa-sunrise fa-4x"></i>
-            </div>
-            <div>
-              <p>Sunrise</p>
-              <h2>${sRiseTime}</h2>
-            </div>
-          </div>
+      // Очистка контейнера перед добавлением элементов
+      sunriseCard.innerHTML = "";
 
-          <div class="item">
-            <div class="icon">
-              <i class="fa-light fa-sunset fa-4x"></i>
-            </div>
-            <div>
-              <p>Sunset</p>
-              <h2>${sSetTime}</h2>
-            </div>
-          </div>
-        </div>
-      `;
-      ////заменить все innerHTML!!!!!!!!!!!!!!
-      humidityVal.innerHTML = `${humidity}%`;
-      pressureVal.innerHTML = `${pressure}hPa`;
-      visibilityVal.innerHTML = `${visibility / 1000}km`;
-      windSpeedVal.innerHTML = `${speed}m/s`;
-      feelsVal.innerHTML = `${(feels_like - 273.15).toFixed(2)}&deg;C`;
+      // Создаем заголовок карточки
+      const cardHead = document.createElement("div");
+      cardHead.classList.add("card-head");
+
+      const cardTitle = document.createElement("p");
+      cardTitle.textContent = "Sunrise & Sunset";
+
+      cardHead.appendChild(cardTitle);
+
+      // Создаем контейнер для sunrise и sunset
+      const sunContainer = document.createElement("div");
+      sunContainer.classList.add("sunrise-sunset");
+
+      // Функция для создания элемента с данными о солнце
+      const createSunItem = (iconClass, label, value) => {
+        const item = document.createElement("div");
+        item.classList.add("item");
+
+        const iconContainer = document.createElement("div");
+        iconContainer.classList.add("icon");
+
+        const icon = document.createElement("i");
+        icon.classList.add("fa-light", iconClass, "fa-4x");
+
+        iconContainer.appendChild(icon);
+
+        const textContainer = document.createElement("div");
+        const title = document.createElement("p");
+        title.textContent = label;
+
+        const time = document.createElement("h2");
+        time.textContent = value;
+
+        textContainer.appendChild(title);
+        textContainer.appendChild(time);
+
+        item.appendChild(iconContainer);
+        item.appendChild(textContainer);
+
+        return item;
+      };
+
+      // Добавляем элементы sunrise и sunset
+      sunContainer.appendChild(
+        createSunItem("fa-sunrise", "Sunrise", sRiseTime)
+      );
+      sunContainer.appendChild(createSunItem("fa-sunset", "Sunset", sSetTime));
+
+      // Добавляем все элементы в карточку
+      sunriseCard.appendChild(cardHead);
+      sunriseCard.appendChild(sunContainer);
+
+      // Обновляем значения в других карточках
+      humidityVal.textContent = `${humidity}%`;
+      pressureVal.textContent = `${pressure}hPa`;
+      visibilityVal.textContent = `${visibility / 1000}km`;
+      windSpeedVal.textContent = `${speed}m/s`;
+      feelsVal.innerHTML = `${(feels_like - 273.15).toFixed(2)}&deg;C`; // Здесь допустимо использовать innerHTML для вставки спецсимвола "°"
     })
     .catch(() => {
       alert(`Failed to fetch current weather`);
@@ -267,55 +364,88 @@ function getWeatherDetails(name, lat, lon, country, state) {
     .then((data) => {
       let hourlyForecast = data.list;
 
-      ////заменить все innerHTML!!!!!!!!!!!!!!
-      hourlyForecastCard.innerHTML = ``;
+      // Очистка контейнера
+      hourlyForecastCard.innerHTML = "";
+
+      // Генерация почасового прогноза
       for (let i = 0; i <= 7; i++) {
         let hrForecastDate = new Date(hourlyForecast[i].dt_txt);
         let hr = hrForecastDate.getHours();
-        let a = "PM";
-        if (hr < 12) a = "AM";
-        if (hr === 0) hr = 12;
-        if (hr > 12) hr = hr - 12;
-        ////заменить все innerHTML!!!!!!!!!!!!!!
-        hourlyForecastCard.innerHTML += `
-          <div class="card">
-            <p>${hr} ${a}</p>
-            <img
-              src="https://openweathermap.org/img/wn/${
-                hourlyForecast[i].weather[0].icon
-              }.png"
-              alt="hourly-forecast"
-            />
-            <p>${(hourlyForecast[i].main.temp - 273.15).toFixed(2)}&deg;C</p>
-          </div>
-        `;
+        let a = hr < 12 ? "AM" : "PM";
+        hr = hr === 0 ? 12 : hr > 12 ? hr - 12 : hr;
+
+        // Создаем карточку прогноза
+        const card = document.createElement("div");
+        card.classList.add("card");
+
+        const timeEl = document.createElement("p");
+        timeEl.textContent = `${hr} ${a}`;
+
+        const imgEl = document.createElement("img");
+        imgEl.src = `https://openweathermap.org/img/wn/${hourlyForecast[i].weather[0].icon}.png`;
+        imgEl.alt = "hourly-forecast";
+
+        const tempEl = document.createElement("p");
+        tempEl.innerHTML = `${(hourlyForecast[i].main.temp - 273.15).toFixed(
+          2
+        )}&deg;C`;
+
+        card.appendChild(timeEl);
+        card.appendChild(imgEl);
+        card.appendChild(tempEl);
+
+        hourlyForecastCard.appendChild(card);
       }
 
+      // Фильтрация уникальных дней для 5-дневного прогноза
       let uniqueForecastDays = [];
       let fiveDaysForecast = data.list.filter((forecast) => {
         let forecastDate = new Date(forecast.dt_txt).getDate();
         if (!uniqueForecastDays.includes(forecastDate)) {
-          return uniqueForecastDays.push(forecastDate);
+          uniqueForecastDays.push(forecastDate);
+          return true;
         }
+        return false;
       });
-      ////заменить все innerHTML!!!!!!!!!!!!!!
+
+      // Очистка контейнера
       fiveDaysForecastCard.innerHTML = "";
+
+      // Генерация прогноза на 5 дней
       for (let i = 1; i < fiveDaysForecast.length; i++) {
         let date = new Date(fiveDaysForecast[i].dt_txt);
-        fiveDaysForecastCard.innerHTML += `
-            <div class="forecast-item">
-                <div class="icon-wrapper">
-                    <img src="https://openweathermap.org/img/wn/${
-                      fiveDaysForecast[i].weather[0].icon
-                    }.png" alt="forecast_img"/>
-                    <span>${(fiveDaysForecast[i].main.temp - 273.15).toFixed(
-                      2
-                    )}&deg;C</span>
-                </div>
-                <p>${date.getDate()} ${months[date.getMonth()]}</p>
-                <p>${days[date.getDay()]}</p>
-            </div>
-        `;
+
+        // Создаем элемент прогноза
+        const forecastItem = document.createElement("div");
+        forecastItem.classList.add("forecast-item");
+
+        // Обертка для иконки и температуры
+        const iconWrapper = document.createElement("div");
+        iconWrapper.classList.add("icon-wrapper");
+
+        const imgEl = document.createElement("img");
+        imgEl.src = `https://openweathermap.org/img/wn/${fiveDaysForecast[i].weather[0].icon}.png`;
+        imgEl.alt = "forecast_img";
+
+        const tempSpan = document.createElement("span");
+        tempSpan.innerHTML = `${(
+          fiveDaysForecast[i].main.temp - 273.15
+        ).toFixed(2)}&deg;C`;
+
+        iconWrapper.appendChild(imgEl);
+        iconWrapper.appendChild(tempSpan);
+
+        const dateEl = document.createElement("p");
+        dateEl.textContent = `${date.getDate()} ${months[date.getMonth()]}`;
+
+        const dayEl = document.createElement("p");
+        dayEl.textContent = days[date.getDay()];
+
+        forecastItem.appendChild(iconWrapper);
+        forecastItem.appendChild(dateEl);
+        forecastItem.appendChild(dayEl);
+
+        fiveDaysForecastCard.appendChild(forecastItem);
       }
     })
     .catch(() => {
@@ -592,9 +722,9 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("load", getUserCoordinates);
-////////////////////////////////////////////$RECYCLE.BIN//////////////S-1-5-18/////////////////////////
-/////////////////////////////////////////////////$RECYCLE.BIN/////////////////////////S-1-5-18/////////////
-/////////////////////////////////////////$RECYCLE.BIN////////////////////////////S-1-5-18//////////////
+////////////////////////////////////////////
+///////////////////////////////////////////
+////////////////////////////////////////
 function updateLayout() {
   let leftBlock = document.querySelector(".weather-left");
   let rightBlock = document.querySelector(".weather-right");
